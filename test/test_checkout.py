@@ -2,42 +2,19 @@
 
 import unittest
 
-RULES = """
-A     50       3 for 130
-B     30       2 for 45
-C     20
-D     15
-"""
-
-import re
-
 from checkout import Checkout
+from item import Item
 
-rules_a = re.split("\n", RULES)
-rules_d = dict()
-from pprint import pprint
-for item in rules_a:
-    if item != '':
-        m = re.match('(\w+)\s+(\d+)(?:\s+(\d+) for (\d+))?', item)
-        if not m:
-            raise ValueError('Unparseable price %s' % item)
-
-        key = m.group(1)
-        price_1 = int(m.group(2))
-        rules_d[key] = { 'price': price_1 }
-
-        if m.group(3) != None:
-            offer_count = int(m.group(3))
-            offer_price = int(m.group(4))
-
-            rules_d[key]['offer'] = [offer_count, offer_price]
-
-# print 'Rules'
-# pprint(rules_d)
+items = {
+    'A': Item('A', 50, 3, 130),
+    'B': Item('B', 30, 2, 45),
+    'C': Item('C', 20),
+    'D': Item('D', 15),
+}
 
 class TestCheckout(unittest.TestCase):
     def price(self, goods):
-        co = Checkout(rules_d)
+        co = Checkout(items)
         for item in goods:
             co.scan(item)
 
@@ -58,7 +35,7 @@ class TestCheckout(unittest.TestCase):
         self.assertEqual(175, self.price("AAABB"))
 
     def test_incremental(self):
-        co = Checkout(rules_d)
+        co = Checkout(items)
         self.assertEqual(  0, co.total())
         co.scan("A");  self.assertEqual( 50, co.total())
         co.scan("B");  self.assertEqual( 80, co.total())
