@@ -19,7 +19,7 @@ rules_d = { item[0]: [int(item[1]), item[2:] ] for item in rules_a }
 class TestCheckout(unittest.TestCase):
     def price(self, goods):
         co = Checkout(rules_d)
-        for item in re.split('//', goods):
+        for item in goods:
             co.scan(item)
 
         return co.total()
@@ -31,3 +31,6 @@ class TestCheckout(unittest.TestCase):
             self.price('foo')
 
         self.assertEqual( 50, self.price("A"))
+        self.assertEqual( 80, self.price("AB"))
+        self.assertEqual(115, self.price("CDBA"))
+        self.assertEqual(100, self.price("AA"))
