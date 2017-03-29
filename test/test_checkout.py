@@ -10,11 +10,15 @@ D     15
 """
 
 import re
+
 from checkout import Checkout
+
+rules_a = [ re.split('\s+', line, 2) for line in re.split("\n", RULES) if line != '']
+rules_d = { item[0]: [item[1:]] for item in rules_a }
 
 class TestCheckout(unittest.TestCase):
     def price(self, goods):
-        co = Checkout(RULES)
+        co = Checkout(rules_d)
         for item in re.split('//', goods):
             co.scan(item)
 
@@ -22,3 +26,6 @@ class TestCheckout(unittest.TestCase):
 
     def test_totals(self):
         self.assertEqual(  0, self.price(""))
+
+        with self.assertRaises( ValueError):
+            self.price('foo')
