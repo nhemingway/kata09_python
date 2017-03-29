@@ -56,3 +56,12 @@ class TestCheckout(unittest.TestCase):
         self.assertEqual(130, self.price("AAA"))
         self.assertEqual(180, self.price("AAAA"))
         self.assertEqual(175, self.price("AAABB"))
+
+    def test_incremental(self):
+        co = Checkout(rules_d)
+        self.assertEqual(  0, co.total())
+        co.scan("A");  self.assertEqual( 50, co.total())
+        co.scan("B");  self.assertEqual( 80, co.total())
+        co.scan("A");  self.assertEqual(130, co.total())
+        co.scan("A");  self.assertEqual(160, co.total())
+        co.scan("B");  self.assertEqual(175, co.total())
